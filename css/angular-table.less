@@ -2,30 +2,73 @@
 	overflow-x: hidden;
 	overflow-y: hidden;
 	border: 1px solid #E1E1E1;
+	background: #E1E1E1;
+	* {
+		box-sizing: border-box;
+	}
 }
-.angular-table-body {
-	overflow-x: hidden;
-	overflow-y: auto;
-}
+
 .angular-table-header {
 	background: whiteSmoke;
 	border-bottom: 1px solid #E1E1E1;
+	overflow-x: hidden;
+	white-space: nowrap;
 }
-.angular-table-header-cell, .angular-table-row-cell {
+
+.angular-table-header-left, .angular-table-header-right {
+	position: relative;
 	display: inline-block;
-	padding: 8px 12px;
+	white-space: nowrap;
+	overflow-x: hidden;
+}
+
+.angular-table-header-cell,
+.angular-table-row-cell {
+	display: inline-block;
+	line-height: 100%;
 	white-space: nowrap;
 	text-overflow: ellipsis;
 	overflow: hidden;
 }
+.angular-table-body {
+	overflow-x: hidden;
+	overflow-y: hidden;
+	position: absolute;
+	background: white;
+}
+.angular-table-body-left, .angular-table-body-right {
+	position: relative;
+	display: inline-block;
+	overflow-x: hidden;
+	overflow-y: hidden;
+}
+.angular-table-body-right {
+	overflow-y: auto;
+}
+.angular-table-row-cell {
+	border-bottom: 1px solid #E1E1E1;
+}
+.angular-table-header-cell label {
+	display: inline-block;
+	padding: 0 12px;
+}
+.angular-table-row-cell-content {
+	display: inline-block;
+	padding: 0 12px;
+}
 .angular-table-header-cell {
-	padding: 10px 12px;
 	font-weight: bold;
 	color: gray;
 }
+.angular-table-fixed-row,
 .angular-table-row {
-	border-bottom: 1px solid #E1E1E1;
-	&:hover {
-		background: #FAFAFA;
-	}
+	white-space: nowrap;
+	overflow-x: hidden;
+	overflow-y: hidden;
+}
+
+.angular-table-column-scroller {
+	position: absolute;
+	overflow-x: auto;
+	overflow-y: hidden;
 }

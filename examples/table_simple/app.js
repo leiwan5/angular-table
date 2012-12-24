@@ -8,6 +8,35 @@
       {
         name: 'name',
         label: '姓名',
+        width: 100,
+        fixed: true
+      }, {
+        name: 'age',
+        label: '年龄',
+        width: 100
+      }, {
+        name: 'age',
+        label: '年龄',
+        width: 100
+      }, {
+        name: 'age',
+        label: '年龄',
+        width: 100
+      }, {
+        name: 'age',
+        label: '年龄',
+        width: 100
+      }, {
+        name: 'age',
+        label: '年龄',
+        width: 100
+      }, {
+        name: 'age',
+        label: '年龄',
+        width: 100
+      }, {
+        name: 'age',
+        label: '年龄',
         width: 100
       }, {
         name: 'age',
@@ -18,8 +47,9 @@
     $scope.tableOptions = {
       height: 300,
       width: 600,
+      rowHeight: 30,
       header: {
-        height: 30
+        height: 32
       }
     };
     return $scope.tableData = [

@@ -5,8 +5,13 @@ angular.module('$angularTable', ['$angularTable.filters', '$angularTable.directi
 
 angular.module('$angularTable.directives').directive 'angularTable', () ->
 	template: '''<div class="angular-table" ng-style="{height:options.height+'px', width:options.width+'px'}">
-			<div angular-table-header data-columns="columns" data-options="options.header"></div>
-			<div angular-table-body data-rows="rows" data-columns="columns" data-options="options"></div>
+			<div class="angular-table-header" ng-style="{height: options.header.height + 'px', width: options.width + 'px'}">
+				<div angular-table-header-left></div><div angular-table-header-right></div>
+			</div>
+			<div angular-table-column-scroller></div>
+			<div class="angular-table-body">
+				<div angular-table-body-left></div><div angular-table-body-right></div>
+			</div>
 		</div>'''
 	replace: true
 	scope:
@@ -14,59 +19,90 @@ angular.module('$angularTable.directives').directive 'angularTable', () ->
 		columns: '=columns'
 		options: '=options'
 	link: (scope, element, attrs) ->
-		# console.log scope
+		scope.$watch 'columns', (cols) ->
+			widthLeft = 0
+			widthRight = 0
+			scope.columns.forEach (col) ->
+				col.fixed = !!col.fixed
+				col.width = col.width || 100
+				widthLeft += col.width if col.fixed
+				widthRight += col.width unless col.fixed
+			scope.widthRight = widthRight
+			scope.widthLeft = widthLeft
 
-angular.module('$angularTable.directives').directive 'angularTableBody', () ->
-	template: '''<div class="angular-table-body" ng-style="{height:(options.height-options.header.height)+'px'}">
-			<div angular-table-row ng-repeat="row in rows" data-row="row" data-columns="columns"></div>
+		scope.$on 'hscroll', (evt, left) ->
+			scope.$broadcast 'adjusthscroll', left
+		scope.$on 'vscroll', (evt, top) ->
+			scope.$broadcast 'adjustvscroll', top
+
+angular.module('$angularTable.directives').directive 'angularTableHeaderLeft', () ->
+	template: '''<div class="angular-table-header-left" ng-style="{height: (options.header.height-1) + 'px'}">
+			<div angular-table-header-cell ng-repeat="column in columns | filter: {fixed: true}"> 
 		</div>'''
 	replace: true
-	scope:
-		rows: '=rows'
-		columns: '=columns'
-		options: '=options'
 	link: (scope, element, attrs) ->
-		# console.log scope
 
-
-angular.module('$angularTable.directives').directive 'angularTableHeader', () ->
-	template: '''<div class="angular-table-header" ng-style="{height:options.height+'px'}">
-			<div angular-table-header-cell ng-repeat="col in columns" data-column="col"></div>
+angular.module('$angularTable.directives').directive 'angularTableHeaderRight', () ->
+	template: '''<div class="angular-table-header-right" ng-style="{height: (options.header.height-1) + 'px', width: (options.width - widthLeft)+'px'}">
+			<div angular-table-header-cell ng-repeat="column in columns | filter: {fixed: false}"> 
 		</div>'''
 	replace: true
-	scope:
-		options: '=options'
-		columns: '=columns'
 	link: (scope, element, attrs) ->
-		# console.log scope
+		scope.$on 'adjusthscroll', (evt, left) ->
+			element[0].scrollLeft = left
 
 angular.module('$angularTable.directives').directive 'angularTableHeaderCell', () ->
 	template: '''<div class="angular-table-header-cell" ng-style="{width: (column.width || 100)+'px'}">
-			<label>{{column.label}}</label>
+			<label ng-style="{height: (options.header.height-1)+'px', lineHeight: (options.header.height-1)+'px'}">
+				{{column.label}}
+			</label>
 		</div>'''
 	replace: true
-	scope:
-		column: '=column'
 	link: (scope, element, attrs) ->
 
-angular.module('$angularTable.directives').directive 'angularTableRow', () ->
-	template: '''<div class="angular-table-row">
-			<div angular-table-row-cell data-column="col" data-row="row" ng-repeat="col in columns"></div>
+angular.module('$angularTable.directives').directive 'angularTableColumnScroller', () ->
+	template: '''<div class="angular-table-column-scroller" ng-style="{marginLeft: (widthLeft) + 'px', width: (options.width - widthLeft)+'px', height: (options.height - options.header.height) + 'px'}">
+			<div ng-style="{width: widthRight+'px'}" style="height: 40px;"></div>
 		</div>'''
 	replace: true
-	scope:
-		columns: '=columns'
-		row: '=row'
 	link: (scope, element, attrs) ->
-		# console.log scope
+		element.bind 'scroll', (evt) ->
+			scope.$emit 'hscroll', evt.srcElement.scrollLeft
+
+
+angular.module('$angularTable.directives').directive 'angularTableBodyLeft', () ->
+	template: '''<div class="angular-table-body-left" ng-style="{height: height + 'px'}">
+			<div class="angular-table-row" ng-repeat="row in rows">
+				<div angular-table-row-cell ng-repeat="column in columns | filter: {fixed: true}"></div>
+			</div>
+		</div>'''
+	replace: true
+	link: (scope, element, attrs) ->
+		scope.height = scope.options.height - scope.options.header.height - 20
+		scope.$on 'adjustvscroll', (evt, top) ->
+			element[0].scrollTop = top
+
+angular.module('$angularTable.directives').directive 'angularTableBodyRight', () ->
+	template: '''<div class="angular-table-body-right" ng-style="{height: height + 'px', width: (options.width - widthLeft)+'px'}">
+			<div class="angular-table-row" ng-repeat="row in rows" ng-style="{width: (widthRight)+'px'}">
+				<div angular-table-row-cell ng-repeat="column in columns | filter: {fixed: false}"></div>
+			</div>
+		</div>'''
+	replace: true
+	link: (scope, element, attrs) ->
+		scope.height = scope.options.height - scope.options.header.height - 20
+		scope.$on 'adjusthscroll', (evt, left) ->
+			element[0].scrollLeft = left
+		element.bind 'scroll', (evt) ->
+			scope.$emit 'vscroll', evt.srcElement.scrollTop
 
 angular.module('$angularTable.directives').directive 'angularTableRowCell', () ->
-	template: '''<div class="angular-table-row-cell" ng-style="{width: (column.width || 100)+'px'}">
-			{{row[column.name]}}
+	template: '''<div class="angular-table-row-cell" ng-style="{height: (options.rowHeight + 1) + 'px', width: (column.width)+'px'}">
+			<span class="angular-table-row-cell-content" ng-style="{height: (options.rowHeight-1)+'px', lineHeight: (options.rowHeight-1)+'px'}">
+				{{row[column.name]}}
+			</span>
 		</div>'''
 	replace: true
-	scope:
-		row: '=row'
-		column: '=column'
 	link: (scope, element, attrs) ->
-		
+
+

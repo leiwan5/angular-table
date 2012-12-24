@@ -11,73 +11,114 @@
 
   angular.module('$angularTable.directives').directive('angularTable', function() {
     return {
-      template: '<div class="angular-table" ng-style="{height:options.height+\'px\', width:options.width+\'px\'}">\n	<div angular-table-header data-columns="columns" data-options="options.header"></div>\n	<div angular-table-body data-rows="rows" data-columns="columns" data-options="options"></div>\n</div>',
+      template: '<div class="angular-table" ng-style="{height:options.height+\'px\', width:options.width+\'px\'}">\n	<div class="angular-table-header" ng-style="{height: options.header.height + \'px\', width: options.width + \'px\'}">\n		<div angular-table-header-left></div><div angular-table-header-right></div>\n	</div>\n	<div angular-table-column-scroller></div>\n	<div class="angular-table-body">\n		<div angular-table-body-left></div><div angular-table-body-right></div>\n	</div>\n</div>',
       replace: true,
       scope: {
         rows: '=ngModel',
         columns: '=columns',
         options: '=options'
       },
+      link: function(scope, element, attrs) {
+        scope.$watch('columns', function(cols) {
+          var widthLeft, widthRight;
+          widthLeft = 0;
+          widthRight = 0;
+          scope.columns.forEach(function(col) {
+            col.fixed = !!col.fixed;
+            col.width = col.width || 100;
+            if (col.fixed) {
+              widthLeft += col.width;
+            }
+            if (!col.fixed) {
+              return widthRight += col.width;
+            }
+          });
+          scope.widthRight = widthRight;
+          return scope.widthLeft = widthLeft;
+        });
+        scope.$on('hscroll', function(evt, left) {
+          return scope.$broadcast('adjusthscroll', left);
+        });
+        return scope.$on('vscroll', function(evt, top) {
+          return scope.$broadcast('adjustvscroll', top);
+        });
+      }
+    };
+  });
+
+  angular.module('$angularTable.directives').directive('angularTableHeaderLeft', function() {
+    return {
+      template: '<div class="angular-table-header-left" ng-style="{height: (options.header.height-1) + \'px\'}">\n	<div angular-table-header-cell ng-repeat="column in columns | filter: {fixed: true}"> \n</div>',
+      replace: true,
       link: function(scope, element, attrs) {}
     };
   });
 
-  angular.module('$angularTable.directives').directive('angularTableBody', function() {
+  angular.module('$angularTable.directives').directive('angularTableHeaderRight', function() {
     return {
-      template: '<div class="angular-table-body" ng-style="{height:(options.height-options.header.height)+\'px\'}">\n	<div angular-table-row ng-repeat="row in rows" data-row="row" data-columns="columns"></div>\n</div>',
+      template: '<div class="angular-table-header-right" ng-style="{height: (options.header.height-1) + \'px\', width: (options.width - widthLeft)+\'px\'}">\n	<div angular-table-header-cell ng-repeat="column in columns | filter: {fixed: false}"> \n</div>',
       replace: true,
-      scope: {
-        rows: '=rows',
-        columns: '=columns',
-        options: '=options'
-      },
-      link: function(scope, element, attrs) {}
-    };
-  });
-
-  angular.module('$angularTable.directives').directive('angularTableHeader', function() {
-    return {
-      template: '<div class="angular-table-header" ng-style="{height:options.height+\'px\'}">\n	<div angular-table-header-cell ng-repeat="col in columns" data-column="col"></div>\n</div>',
-      replace: true,
-      scope: {
-        options: '=options',
-        columns: '=columns'
-      },
-      link: function(scope, element, attrs) {}
+      link: function(scope, element, attrs) {
+        return scope.$on('adjusthscroll', function(evt, left) {
+          return element[0].scrollLeft = left;
+        });
+      }
     };
   });
 
   angular.module('$angularTable.directives').directive('angularTableHeaderCell', function() {
     return {
-      template: '<div class="angular-table-header-cell" ng-style="{width: (column.width || 100)+\'px\'}">\n	<label>{{column.label}}</label>\n</div>',
+      template: '<div class="angular-table-header-cell" ng-style="{width: (column.width || 100)+\'px\'}">\n	<label ng-style="{height: (options.header.height-1)+\'px\', lineHeight: (options.header.height-1)+\'px\'}">\n		{{column.label}}\n	</label>\n</div>',
       replace: true,
-      scope: {
-        column: '=column'
-      },
       link: function(scope, element, attrs) {}
     };
   });
 
-  angular.module('$angularTable.directives').directive('angularTableRow', function() {
+  angular.module('$angularTable.directives').directive('angularTableColumnScroller', function() {
     return {
-      template: '<div class="angular-table-row">\n	<div angular-table-row-cell data-column="col" data-row="row" ng-repeat="col in columns"></div>\n</div>',
+      template: '<div class="angular-table-column-scroller" ng-style="{marginLeft: (widthLeft) + \'px\', width: (options.width - widthLeft)+\'px\', height: (options.height - options.header.height) + \'px\'}">\n	<div ng-style="{width: widthRight+\'px\'}" style="height: 40px;"></div>\n</div>',
       replace: true,
-      scope: {
-        columns: '=columns',
-        row: '=row'
-      },
-      link: function(scope, element, attrs) {}
+      link: function(scope, element, attrs) {
+        return element.bind('scroll', function(evt) {
+          return scope.$emit('hscroll', evt.srcElement.scrollLeft);
+        });
+      }
+    };
+  });
+
+  angular.module('$angularTable.directives').directive('angularTableBodyLeft', function() {
+    return {
+      template: '<div class="angular-table-body-left" ng-style="{height: height + \'px\'}">\n	<div class="angular-table-row" ng-repeat="row in rows">\n		<div angular-table-row-cell ng-repeat="column in columns | filter: {fixed: true}"></div>\n	</div>\n</div>',
+      replace: true,
+      link: function(scope, element, attrs) {
+        scope.height = scope.options.height - scope.options.header.height - 20;
+        return scope.$on('adjustvscroll', function(evt, top) {
+          return element[0].scrollTop = top;
+        });
+      }
+    };
+  });
+
+  angular.module('$angularTable.directives').directive('angularTableBodyRight', function() {
+    return {
+      template: '<div class="angular-table-body-right" ng-style="{height: height + \'px\', width: (options.width - widthLeft)+\'px\'}">\n	<div class="angular-table-row" ng-repeat="row in rows" ng-style="{width: (widthRight)+\'px\'}">\n		<div angular-table-row-cell ng-repeat="column in columns | filter: {fixed: false}"></div>\n	</div>\n</div>',
+      replace: true,
+      link: function(scope, element, attrs) {
+        scope.height = scope.options.height - scope.options.header.height - 20;
+        scope.$on('adjusthscroll', function(evt, left) {
+          return element[0].scrollLeft = left;
+        });
+        return element.bind('scroll', function(evt) {
+          return scope.$emit('vscroll', evt.srcElement.scrollTop);
+        });
+      }
     };
   });
 
   angular.module('$angularTable.directives').directive('angularTableRowCell', function() {
     return {
-      template: '<div class="angular-table-row-cell" ng-style="{width: (column.width || 100)+\'px\'}">\n	{{row[column.name]}}\n</div>',
+      template: '<div class="angular-table-row-cell" ng-style="{height: (options.rowHeight + 1) + \'px\', width: (column.width)+\'px\'}">\n	<span class="angular-table-row-cell-content" ng-style="{height: (options.rowHeight-1)+\'px\', lineHeight: (options.rowHeight-1)+\'px\'}">\n		{{row[column.name]}}\n	</span>\n</div>',
       replace: true,
-      scope: {
-        row: '=row',
-        column: '=column'
-      },
       link: function(scope, element, attrs) {}
     };
   });
