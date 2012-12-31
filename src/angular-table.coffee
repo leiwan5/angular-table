@@ -1,3 +1,13 @@
+getScrollBarWidth = () ->
+	helper = document.createElement 'div'
+	helper.style = 'width: 100px; height: 100px; overflow:hidden;'
+	document.body.appendChild helper
+	bigger = helper.clientWidth
+	helper.style.overflow = 'scroll'
+	smaller = helper.clientWidth
+	document.body.removeChild helper
+	bigger - smaller
+
 angular.module('$angularTable.config', []).value('$angularTable.config', {});
 angular.module('$angularTable.filters', ['$angularTable.config']);
 angular.module('$angularTable.directives', ['$angularTable.config']);
@@ -9,7 +19,7 @@ angular.module('$angularTable.directives').directive 'angularTable', () ->
 				<div angular-table-header-left></div><div angular-table-header-right></div>
 			</div>
 			<div angular-table-column-scroller></div>
-			<div class="angular-table-body">
+			<div class="angular-table-body" ng-style="{height: (options.height - options.header.height - scrollbarWidth) + 'px'}">
 				<div angular-table-body-left></div><div angular-table-body-right></div>
 			</div>
 		</div>'''
@@ -19,6 +29,11 @@ angular.module('$angularTable.directives').directive 'angularTable', () ->
 		columns: '=columns'
 		options: '=options'
 	link: (scope, element, attrs) ->
+		setTimeout ->
+			scope.$apply ->
+				scope.scrollbarWidth = getScrollBarWidth()
+				console.log scope.options.height - scope.options.header.height - scope.scrollbarWidth
+			,0
 		scope.$watch 'columns', (cols) ->
 			widthLeft = 0
 			widthRight = 0
@@ -61,7 +76,7 @@ angular.module('$angularTable.directives').directive 'angularTableHeaderCell', (
 	link: (scope, element, attrs) ->
 
 angular.module('$angularTable.directives').directive 'angularTableColumnScroller', () ->
-	template: '''<div class="angular-table-column-scroller" ng-style="{marginLeft: (widthLeft) + 'px', width: (options.width - widthLeft)+'px', height: (options.height - options.header.height) + 'px'}">
+	template: '''<div class="angular-table-column-scroller" ng-style="{marginLeft: (widthLeft) + 'px', width: (options.width - widthLeft)+'px', height:(options.height - options.header.height) + 'px'}">
 			<div ng-style="{width: widthRight+'px'}" style="height: 40px;"></div>
 		</div>'''
 	replace: true
@@ -71,26 +86,24 @@ angular.module('$angularTable.directives').directive 'angularTableColumnScroller
 
 
 angular.module('$angularTable.directives').directive 'angularTableBodyLeft', () ->
-	template: '''<div class="angular-table-body-left" ng-style="{height: height + 'px'}">
+	template: '''<div class="angular-table-body-left" ng-style="{height: (options.height - options.header.height - scrollbarWidth) + 'px'}">
 			<div class="angular-table-row" ng-repeat="row in rows">
 				<div angular-table-row-cell ng-repeat="column in columns | filter: {fixed: true}"></div>
 			</div>
 		</div>'''
 	replace: true
 	link: (scope, element, attrs) ->
-		scope.height = scope.options.height - scope.options.header.height - 20
 		scope.$on 'adjustvscroll', (evt, top) ->
 			element[0].scrollTop = top
 
 angular.module('$angularTable.directives').directive 'angularTableBodyRight', () ->
-	template: '''<div class="angular-table-body-right" ng-style="{height: height + 'px', width: (options.width - widthLeft)+'px'}">
+	template: '''<div class="angular-table-body-right" ng-style="{height: (options.height - options.header.height - scrollbarWidth) + 'px', width: (options.width - widthLeft)+'px'}">
 			<div class="angular-table-row" ng-repeat="row in rows" ng-style="{width: (widthRight)+'px'}">
 				<div angular-table-row-cell ng-repeat="column in columns | filter: {fixed: false}"></div>
 			</div>
 		</div>'''
 	replace: true
 	link: (scope, element, attrs) ->
-		scope.height = scope.options.height - scope.options.header.height - 20
 		scope.$on 'adjusthscroll', (evt, left) ->
 			element[0].scrollLeft = left
 		element.bind 'scroll', (evt) ->
