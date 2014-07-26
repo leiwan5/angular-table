@@ -11,6 +11,7 @@ gulp.task 'build:lib:less', ->
 	gulp.src ['src/css/main.less']
 		.pipe sourcemaps.init()
 		.pipe less().on('error', gutil.log)
+		.pipe concat('angular-table.css')
 		.pipe sourcemaps.write()
 		.pipe gulp.dest 'build/'
 
