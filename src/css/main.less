@@ -1,35 +1,37 @@
+@import "flexbox";
+
 .angular-table {
 	overflow-x: hidden;
 	overflow-y: hidden;
-	display: box;
-	display: -moz-box;
-	display: -webkit-box;
-	-webkit-box-orient: vertical;
+	.box-display;
+	.box-orient(vertical);
 }
 .angular-table-header {
 	white-space: nowrap;
-	height: 30px;
 	border-bottom: 2px solid #eee;
 	overflow: hidden;
 	font-weight: bold;
+	.box-display;
+	.box-orient;
 }
 
 .angular-table-cell {
 	padding: 0 8px;
 	border-right: 1px solid #eee;
+	overflow: hidden;
 	&:nth-last-child(1) {
 		border-right: 0
+	}
+	&.flex {
+		.box-flex(1);
 	}
 }
 
 .angular-table-header-cell {
-	display: inline-block;
 }
 
 .angular-table-body {
-	box-flex: 1;
-	-moz-box-flex: 1;
-	-webkit-box-flex: 1;
+	.box-flex(1);
 	position: relative;
 	overflow: hidden;
 }
@@ -37,11 +39,14 @@
 .angular-table-body-row {
 	white-space: nowrap;
 	overflow: visible;
+	border-bottom: 1px solid #eee;
+	.box-display;
+	.box-orient;
 }
 
 .angular-table-body-row-cell {
-	display: inline-block;
-	border-bottom: 1px solid #eee;
+	// display: inline-block;
+	// border-bottom: 1px solid #eee;
 }
 
 // .angular-table-header {
