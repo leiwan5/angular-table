@@ -3,7 +3,7 @@ angular-table
 
 A fast, lazy rendered, easily extensible table built with [AngularJS](http://angularjs.org/).
 
-Examples
+Demos
 ----------
 
-* Simple http://danielking.github.com/repo/angular-table/examples/table_simple/
+* http://danielking.github.io/angular-table/build/demos/

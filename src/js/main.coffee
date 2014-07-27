@@ -1,4 +1,4 @@
-angular.module '$angularTable', []
+angular.module '$angularTable', ['pasvaz.bindonce']
 
 # angular.module('$angularTable.config', []).value('$angularTable.config', {});
 # angular.module('$angularTable.filters', ['$angularTable.config']);
