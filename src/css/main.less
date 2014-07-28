@@ -3,16 +3,14 @@
 .angular-table {
 	overflow-x: hidden;
 	overflow-y: hidden;
-	.box-display;
-	.box-orient(vertical);
+	.flex-display;
+	.flex-direction(column);
 }
 .angular-table-header {
-	white-space: nowrap;
 	border-bottom: 2px solid #eee;
 	overflow: hidden;
 	font-weight: bold;
-	.box-display;
-	.box-orient;
+	.flex-display;
 }
 
 .angular-table-cell {
@@ -23,7 +21,7 @@
 		border-right: 0
 	}
 	&.flex {
-		.box-flex(1);
+		.flex(1);
 	}
 }
 
@@ -31,17 +29,16 @@
 }
 
 .angular-table-body {
-	.box-flex(1);
-	position: relative;
+	.flex(1);
 	overflow: hidden;
+	position: relative;
 }
 
 .angular-table-body-row {
 	white-space: nowrap;
 	overflow: visible;
 	border-bottom: 1px solid #eee;
-	.box-display;
-	.box-orient;
+	.flex-display;
 }
 
 .angular-table-body-row-cell {
