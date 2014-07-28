@@ -5,27 +5,6 @@
 
 // Flexbox display
 // flex or inline-flex
-.box-orient(@orient: horizontal) {
-  -webkit-box-orient: @orient;
-  -moz-box-orient: @orient;
-  -ms-box-orient: @orient;
-  box-orient: @orient;
-}
-
-.box-display() {
-  display: ~"-webkit-box";
-  display: ~"-moz-box";
-  display: ~"-ms-box";
-  display: box;
-}
-
-.box-flex(@flex) {
-  -webkit-box-flex: @flex;
-  -moz-box-flex: @flex;
-  -ms-box-flex: @flex;
-  box-flex: @flex;
-}
-
 
 .flex-display(@display: flex) {
 	display: ~"-webkit-@{display}";

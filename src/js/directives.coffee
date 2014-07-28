@@ -14,6 +14,7 @@ angularTable.directive 'angularTable', ->
 						}" bo-text="col.label" bo-class="col.width ? '' : 'flex'">
 				</div>
 			</div>
+
 			<div class="angular-table-body">
 				<div class="angular-table-body-row" bindonce ng-repeat="item in config.data">
 					<div class="angular-table-cell angular-table-body-row-cell" bindonce ng-repeat="col in config.columns" bo-style="{
@@ -33,9 +34,6 @@ angularTable.directive 'angularTable', ->
 	scope:
 		config: '=angularTable'
 	link: (scope, element, attrs) ->
-		# scope.$watch 'config', (config) ->
-		# 	console.log config
-
 		headerElement = element.find '.angular-table-header'
 		bodyElement = element.find '.angular-table-body'
 		bodyElement.perfectScrollbar()
