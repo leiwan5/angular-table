@@ -9,24 +9,22 @@ app.controller 'AppController', [
 
 		$scope.table =
 			data: []
-			columns: [
-				{field: 'name', label: 'Name', align: 'left', width: 100, sticky: 'left'},
-				{field: 'age', label: 'Age', width: 100, align: 'right', sticky: 'left'},
-				{field: 'gender', label: 'Gender', width: 100, formatter: formatters.gender},
-				{field: 'name', label: 'Name', align: 'left', minWidth: 140},
-				{field: 'age', label: 'Age', width: 100, align: 'right'},
-				{field: 'gender', label: 'Gender', width: 100, formatter: formatters.gender},
-				{field: 'age', label: 'Age', width: 100, align: 'right'},
-				{field: 'gender', label: 'Gender', width: 100, formatter: formatters.gender},
-				{field: 'age', label: 'Age', width: 100, align: 'right'},
-				{field: 'gender', label: 'Gender', width: 100, formatter: formatters.gender},
-				{field: 'age', label: 'Age', width: 100, align: 'right'},
-				{label: 'Actions', width: 100, sticky: 'right', type: 'actions', actions: [
-					{action: 'edit', title: 'Edit', iconClass: 'glyphicon glyphicon-pencil'},
-					{action: 'delete', title: 'Delete', iconClass: 'glyphicon glyphicon-trash'},
-					{action: 'open', title: 'Open', iconClass: 'glyphicon glyphicon-share-alt'},
-				]},
-			]
+			columns:
+				left: [
+					{field: 'name', label: 'Name', align: 'left', width: 100, resizable: true},
+					{field: 'age', label: 'Age', width: 100, align: 'right', resizable: true},
+				]
+				center: [
+					{field: 'name', label: 'Name', align: 'left'},
+					{field: 'age', label: 'Age', width: 100, align: 'right'},
+				]
+				right: [
+					{label: 'Actions', width: 100, type: 'actions', actions: [
+						{action: 'edit', title: 'Edit', iconClass: 'glyphicon glyphicon-pencil'},
+						{action: 'delete', title: 'Delete', iconClass: 'glyphicon glyphicon-trash'},
+						{action: 'open', title: 'Open', iconClass: 'glyphicon glyphicon-share-alt'},
+					]},
+				]
 
 		$scope.test = ->
 			$scope.table.data[0] = name: 'hello'
