@@ -26,12 +26,19 @@ angularTable.directive 'angularTableBodyColumn', ->
 						bo-attr bo-attr-data-index="$index"
 						bo-class="$index == selected ? 'selected' : ''"
 					>
-				<div class="angular-table-body-cell-content" ng-style="{
+				<div bo-if="col.type!='actions'" class="angular-table-body-cell-content" ng-style="{
 						height: (config.rowHeight || 30) + 'px',
 						'line-height': (config.rowHeight || 30) + 'px',
 						'text-align': (col.align || 'center')
 					}"
 					bo-text="col.formatter ? col.formatter(item[col.field]) : item[col.field]">
+				</div>
+				<div bo-if="col.type=='actions'" class="angular-table-body-row-cell-content" bo-style="{
+						height: (config.rowHeight || 30) + 'px',
+						'line-height': (config.rowHeight || 30) + 'px',
+						'text-align': (col.align || 'center')
+						}">
+					<span class="icon" bindonce ng-repeat="action in col.actions" bo-class="action.iconClass")
 				</div>
 			</div>
 		</div>
