@@ -5,11 +5,17 @@
 	overflow-y: hidden;
 	.flex-display;
 	.flex-direction(column);
+	-webkit-user-select: none;
+
+	.flex {
+		.flex(1);
+	}
 }
 .angular-table-header {
-	border-bottom: 2px solid #eee;
+	border-bottom: 1px solid #eee;
 	overflow: hidden;
 	font-weight: bold;
+	background-color: #fafafa;
 	.flex-display;
 }
 
@@ -19,26 +25,10 @@
 	border-right: 1px solid #eee;
 }
 
-.angular-table-body-left, .angular-table-body-right {
-	overflow: hidden;
-}
-
-
-.angular-table-body-center {
-	overflow: hidden;
-	.flex(1);
-	.flex-display;
-	position: relative;
-	border-right: 1px solid #eee;
-}
-
 .angular-table-cell {
 	padding: 0 8px;
 	border-right: 1px solid #eee;
 	overflow: hidden;
-	&.flex {
-		.flex(1);
-	}
 
 	.icon {
 		opacity: 0.5;
@@ -50,25 +40,76 @@
 }
 
 .angular-table-header-cell {
+	padding-left: 0;
+	padding-right: 4px;
+
+
+	.angular-table-header-cell-content {
+		padding-left: 8px;
+		padding-right: 4px;
+	}
+
+	&.resizable {
+		cursor: e-resize;
+		.angular-table-header-cell-content {
+			border-right: 1px solid #eee;
+			cursor: default;
+		}
+	}
+
+	&.resizing {
+		background: #ddd;
+		.angular-table-header-cell-content {
+			background-color: #fcfcfc;
+		}
+	}
+
 
 }
 
 .angular-table-body {
 	.flex(1);
+	.flex-display;
+}
+
+.angular-table-header-left, .angular-table-header-right {
 	overflow: hidden;
 	.flex-display;
 }
 
-.angular-table-body-inner {
-
+.angular-table-header-right {
+	.angular-table-header-cell:nth-last-child(1) {
+		cursor: default;
+	}
 }
 
-.angular-table-body-row {
-	white-space: nowrap;
-	overflow: visible;
+.angular-table-header-center {
+	.flex(1);
+	.flex-display;
+	overflow: hidden;
+}
+.angular-table-body-left, .angular-table-body-right {
+	overflow: hidden;
 	.flex-display;
 }
 
-.angular-table-body-row-cell {
-	border-bottom: 1px solid #eee;
+.angular-table-body-center {
+	.flex(1);
+	.flex-display;
+	position: relative;
+	overflow: hidden;
 }
+
+.angular-table-body-cell {
+	border-bottom: 1px solid #eee;
+
+	&.hover {
+		background-color: #fcfcfc;
+	}
+
+	&.selected {
+		background-color: #5bc0de;
+		color: white;
+	}
+}
+
